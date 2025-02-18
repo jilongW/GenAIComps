@@ -34,7 +34,8 @@ elif [ ${SERVICE} = "all" ]; then \
     pip install --no-cache-dir -r /home/user/comps/rerankings/src/requirements_videoqna.txt; \
 fi && \
 pip install --no-cache-dir --upgrade pip setuptools && \
-pip install --no-cache-dir -r /home/user/comps/rerankings/src/requirements.txt;
+pip install --no-cache-dir -r /home/user/comps/rerankings/src/requirements.txt && \
+pip install --no-cache-dir --upgrade sentence_transformers;
 
 ENV PYTHONPATH=$PYTHONPATH:/home/user
 
