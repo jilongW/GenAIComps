@@ -21,6 +21,7 @@ RUN git clone --branch openai_compat --single-branch https://github.com/Spycsh/G
 RUN git clone https://huggingface.co/lj1995/GPT-SoVITS pretrained_models
 RUN mv pretrained_models/*  GPT-SoVITS/GPT_SoVITS/pretrained_models/ && \
     rm -rf pretrained_models && \
+    pip install --no-cache-dir --upgrade setuptools && \
     pip install --no-cache-dir -r GPT-SoVITS/requirements.txt && \
     python -m nltk.downloader averaged_perceptron_tagger_eng cmudict
 
