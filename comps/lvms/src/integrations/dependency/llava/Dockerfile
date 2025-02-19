@@ -17,8 +17,7 @@ ENV PYTHONPATH=/home/user:/usr/lib/habanalabs/:/optimum-habana
 COPY comps /home/user/comps
 
 RUN pip install --no-cache-dir --upgrade pip setuptools && \
-    pip install --no-cache-dir -r /home/user/comps/lvms/src/integrations/dependency/llava/requirements.txt && \
-    pip install --no-cache-dir --upgrade transformers
+    pip install --no-cache-dir -r /home/user/comps/lvms/src/integrations/dependency/llava/requirements.txt
 
 ENV PYTHONPATH=$PYTHONPATH:/home/user
 
