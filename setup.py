@@ -59,12 +59,7 @@ if __name__ == "__main__":
         keywords="GenAI",
         license="Apache 2.0",
         url="https://github.com/opea-project/GenAIComps",
-        packages=find_packages(
-            include=[
-                "comps.cores",
-                "comps.cores.*",
-            ],
-        ),
+        packages=find_packages(),
         package_data={"": ["*.yaml", "../*.py"]},
         include_package_data=True,
         install_requires=fetch_requirements("requirements.txt"),

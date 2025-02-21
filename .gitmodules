@@ -1,0 +1,3 @@
+[submodule "comps/finetuning/src/clip/CLIP_LLama_Factory"]
+	path = comps/finetuning/src/clip/CLIP_LLama_Factory
+	url = https://github.com/intel-sandbox/CLIP_LLama_Factory.git

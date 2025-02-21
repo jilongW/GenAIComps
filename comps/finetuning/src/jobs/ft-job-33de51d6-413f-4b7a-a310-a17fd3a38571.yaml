@@ -1,0 +1,68 @@
+Dataset:
+  block_size: 512
+  data_preprocess_type: neural_chat
+  group: true
+  mask_input: true
+  mask_response: true
+  max_eval_samples: 0
+  max_length: 512
+  max_prompt_length: 512
+  max_seq_length: 512
+  max_source_length: 384
+  max_train_samples: 0
+  pad_to_max: false
+  padding: true
+  padding_side: right
+  passage_instruction_for_retrieval: null
+  passage_max_len: 128
+  query_instruction_for_retrieval: null
+  query_max_len: 128
+  shuffle: false
+  train_file: datasets/alpaca_data.json
+  train_group_size: 8
+  truncation: true
+  truncation_side: right
+  validation_file: null
+  validation_split_percentage: 5
+General:
+  base_model: BAAI/bge-reranker-large
+  config:
+    token: null
+    trust_remote_code: false
+  enable_gradient_checkpointing: false
+  gaudi_config_name: null
+  gpt_base_model: false
+  lora_config: null
+  output_dir: output/ft-job-33de51d6-413f-4b7a-a310-a17fd3a38571
+  report_to: none
+  resume_from_checkpoint: null
+  save_strategy: no
+  task: rerank
+  tokenizer_name: null
+Training:
+  accelerate_mode: DDP
+  batch_size: 2
+  deepspeed_config_file: ''
+  device: cpu
+  dpo_beta: 0.1
+  embedding_training_config:
+    negatives_cross_device: false
+    normalized: true
+    sentence_pooling_method: cls
+    temperature: 0.02
+    use_inbatch_neg: true
+  epochs: 1
+  gradient_accumulation_steps: 1
+  hpu_execution_mode: lazy
+  learning_rate: 5e-05
+  logging_steps: 10
+  lr_scheduler: linear
+  max_train_steps: null
+  mixed_precision: no
+  num_training_workers: 1
+  optimizer: adamw_torch
+  resources_per_worker:
+    CPU: 32
+    GPU: 0
+    HPU: 0
+  weight_decay: 0.0
