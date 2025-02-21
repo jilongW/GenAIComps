@@ -1,7 +1,0 @@
-General:
-  config_file: null
-  dataset: null
-  device: null
-  model: null
-  tool: clip
-  trainer: null
