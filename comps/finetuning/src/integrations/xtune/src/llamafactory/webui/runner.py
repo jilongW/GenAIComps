@@ -19,7 +19,6 @@ from typing import TYPE_CHECKING, Any, Dict, Generator, Optional
 
 import psutil
 from transformers.trainer import TRAINING_ARGS_NAME
-
 from ..extras.constants import LLAMABOARD_CONFIG, PEFT_METHODS, TRAINING_STAGES
 from ..extras.misc import is_gpu_or_npu_available, torch_gc
 from ..extras.packages import is_gradio_available
@@ -364,8 +363,7 @@ class Runner:
             if args.get("deepspeed", None) is not None:
                 env["FORCE_TORCHRUN"] = "1"
 
-            self.trainer = Popen("llamafactory-cli train {}".format(save_cmd(args)), env=env, shell=True)
-            print(self.trainer.pid)
+            self.trainer = Popen("llamafactory-cli train {}".format(save_cmd(args)), env=env, shell=True) #nosec
             yield from self.monitor()
 
     def _form_config_dict(self, data: Dict["Component", Any]) -> Dict[str, Any]:
