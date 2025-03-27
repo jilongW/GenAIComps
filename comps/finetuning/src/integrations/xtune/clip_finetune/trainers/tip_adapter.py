@@ -399,7 +399,7 @@ class Tip_Adapter(TrainerX):
 
         # config for ITC task
         if "ITC" in self.cfg.DATASET.NAME:
-            if split == "val" :
+            if split == "val":
                 if self.cfg.DATASET.NAME == "ITC_Flickr":
                     annotation = json.load(
                         open(os.path.join(os.path.join(self.cfg.DATASET.ROOT, "flickr"), "flickr30k_val.json"), "r")
@@ -415,7 +415,7 @@ class Tip_Adapter(TrainerX):
                             "r",
                         )
                     )
-            elif split == "test" :
+            elif split == "test":
                 if self.cfg.DATASET.NAME == "ITC_Flickr":
                     annotation = json.load(
                         open(os.path.join(os.path.join(self.cfg.DATASET.ROOT, "flickr"), "flickr30k_test.json"), "r")
