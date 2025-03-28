@@ -47,7 +47,7 @@ from ...clip_finetune.datasets import (
     imagenetv2,
     mini_imagenet,
     mscoco,
-    oxford_pets,,
+    oxford_pets,
 )
 from ...clip_finetune.trainers import (
     clip_adapter_hf,
