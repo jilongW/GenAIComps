@@ -7,18 +7,17 @@ if [ -f "README.md" ]; then
     echo "Please follow README.md to install driver and other dependency"
 else
     echo "prepare dassl for xtune"
-    git clone https://github.com/jilongW/patch.git
     git clone https://github.com/KaiyangZhou/Dassl.pytorch.git dassl
-    cd dassl && git am ../patch/dassl-update-for-xtune.patch && cd ..
+    cd dassl && git fetch origin pull/72/head:xtune && git checkout xtune && cd ..
     mv dassl clip_finetune/
     echo "dassl done"
     echo "prepare adaclip for xtune"
     git clone https://github.com/SamsungLabs/AdaCLIP.git
-    cd AdaCLIP && git am ../patch/adaclip-update-for-xtune.patch && cd .. && rsync -avPr AdaCLIP/  adaclip_finetune/ && rm -rf AdaCLIP
+    cd AdaCLIP && git fetch origin pull/3/head:xtune && git checkout xtune && cd .. && rsync -avPr AdaCLIP/  adaclip_finetune/ && rm -rf AdaCLIP
     echo "adaclip done"
     echo "prepare llama-factory for xtune"
     git clone https://github.com/hiyouga/LLaMA-Factory.git
-    cd LLaMA-Factory && git checkout 38e955d4a917a7e600cfd17a041a1472e8d81370 && git am ../patch/update_for_xtune.patch && cd ..
+    cd LLaMA-Factory && git fetch origin pull/7519/head:xtune && git checkout xtune && cd ..
     rsync -avPr LLaMA-Factory/  .
     rm -rf LLaMA-Factory
     mv clip_finetune src/llamafactory/
