@@ -48,6 +48,7 @@ from ...clip_finetune.datasets import (
     mini_imagenet,
     mscoco,
     oxford_pets,
+    dtd,
 )
 from ...clip_finetune.trainers import (
     clip_adapter_hf,
@@ -55,7 +56,6 @@ from ...clip_finetune.trainers import (
     clip_fullfinetune_hf,
     clip_vpt_hf,
     tip_adapter,
-    zsclip,
 )
 
 
