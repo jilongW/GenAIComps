@@ -109,7 +109,7 @@ bash scripts/clip_finetune/clip_prompt_hf.sh mini_imagenet vit_b16 1 True 0
 bash scripts/clip_finetune/clip_adapter_hf.sh flickr30k vit_b16 0
 
 # checkpoint will save to output/$METHOD/$MODEL/$DATASET
-# you can set `export clip_DEBUG=1` to remove checkpoint
+# you can set `export CLIP_DEBUG=1` to remove checkpoint
 ```
 
 # config yaml for clip_bias
