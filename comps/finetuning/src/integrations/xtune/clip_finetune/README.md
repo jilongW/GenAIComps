@@ -39,7 +39,7 @@ sudo sh ./intel-oneapi-base-toolkit-2025.0.1.46_offline.sh -a --silent --cli --e
 
 ### Install Driver
 
-please follow [Install Dependency](./install_dependency.md) to install public Driver
+please follow [Install Dependency](./doc/install_dependency.md) to install public Driver
 
 ### Install IPEX and other lib
 
@@ -68,7 +68,7 @@ export HF_ENDPOINT=https://hf-mirror.com
 
 # Prepare Dataset
 
-Please follow [doc](./Prepare_dataset.md)
+Please follow [doc](./doc/Prepare_dataset.md)
 
 ```python
 # support  caltech101, mini-imagenet, flickr30k, flickr5k

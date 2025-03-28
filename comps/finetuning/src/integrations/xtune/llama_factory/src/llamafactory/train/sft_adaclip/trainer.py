@@ -1,20 +1,3 @@
-# Copyright 2024 HuggingFace Inc. and the LlamaFactory team.
-#
-# This code is inspired by the HuggingFace's transformers library.
-# https://github.com/huggingface/transformers/blob/v4.40.0/src/transformers/trainer_seq2seq.py
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import json
 import os
 from types import MethodType
@@ -60,18 +43,6 @@ class CustomSeq2SeqTrainer(Seq2SeqTrainer):
 
             self.accelerator.clip_grad_norm_ = MethodType(clip_grad_norm_old_version, self.accelerator)
             self.add_callback(BAdamCallback)
-        # self.cfg = setup_cfg(finetuning_args)
-        # if self.cfg.SEED >= 0:
-        #     print("Setting fixed seed: {}".format(self.cfg.SEED))
-        #     set_random_seed(self.cfg.SEED)
-        # setup_logger(self.cfg.OUTPUT_DIR)
-
-        # if torch.cuda.is_available() and self.cfg.USE_CUDA:
-        #     torch.backends.cudnn.benchmark = True
-        # print_args(args, self.cfg)
-        # print("Collecting env info ...")
-        # print("** System info **\n{}\n".format(collect_env_info()))
-        # self.trainer = build_trainer(self.cfg)
 
     @override
     def create_optimizer(self) -> "torch.optim.Optimizer":

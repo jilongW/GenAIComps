@@ -1,19 +1,3 @@
-# Copyright 2024 HuggingFace Inc. and the LlamaFactory team.
-#
-# This code is inspired by the HuggingFace's transformers library.
-# https://github.com/huggingface/transformers/blob/v4.40.0/examples/pytorch/summarization/run_summarization.py
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 import json
 import os
 import shutil
@@ -51,12 +35,8 @@ from optuna.trial import TrialState
 
 from ...clip_finetune.datasets import (
     caltech101,
-    dtd,
-    eurosat,
-    fgvc_aircraft,
     flickr,
     flickr5k,
-    food101,
     imagenet,
     imagenet_a,
     imagenet_r,
@@ -64,23 +44,13 @@ from ...clip_finetune.datasets import (
     imagenetv2,
     mini_imagenet,
     mscoco,
-    oxford_flowers,
-    oxford_pets,
-    stanford_cars,
-    sun397,
-    ucf101,
+    oxford_pets,,
 )
 from ...clip_finetune.trainers import (
-    clip_adapter,
     clip_adapter_hf,
-    clip_bias,
     clip_bias_hf,
-    clip_fullfinetune,
     clip_fullfinetune_hf,
-    clip_vpt,
     clip_vpt_hf,
-    cocoop,
-    coop,
     tip_adapter,
     zsclip,
 )

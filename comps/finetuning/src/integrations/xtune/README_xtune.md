@@ -4,13 +4,16 @@
 
 > [!NOTE]
 >
-> - _`Xtune`_ provides UI with fine-tuning tool for [CLIP](./clip_finetune/README.md) and [AdaCLIP](./adaclip_finetune/). It makes easier to choose the method and to set fine-tuning parameters.
+> - _`Xtune`_ incorporates with Llama-Factory to offer various methods for finetuning visual models (CLIP, AdaCLIP), LLM and Multi-modal models​. It makes easier to choose the method and to set fine-tuning parameters.
 
 The core features include:
 
 - Four finetune method for CLIP, details in [CLIP](./doc/key_features_for_clip_finetune_tool.md)
-- Three finetune method for AdaCLIP, details in [AdaCLIP](./src/llamafactory/adaclip_finetune/README.md)
-- Combined [Optuna](https://github.com/optuna/optuna) to automatic get the best param
+- Three finetune method for AdaCLIP, details in [AdaCLIP](./doc/adaclip_readme.md)
+- Automatic hyperparameter searching enabled by Optuna [Optuna](https://github.com/optuna/optuna)
+- Distillation from large models with Intel ARC GPU​
+- Incorporate with Llama-Factory UI​
+- Finetune methods for multi-modal models (to be supported)​
 
 You can use this UI to easily access basic functions(merge two tool into one UI),
 
