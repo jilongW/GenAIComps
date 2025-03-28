@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -f "README.md" ]; then
+if [ -f "done" ]; then
     echo "All component preparation is done"
     echo "Please follow README.md to install driver and other dependency"
 else
@@ -10,8 +10,12 @@ else
     cd llama_factory && mv data examples src ../ && cd ..
     bash llama_factory/prepare_llama_factory.sh
     rm -rf llama_factory
-    mv clip_finetune src/llamafactory/
-    mv adaclip_finetune src/llamafactory/
+    rsync -avPr clip_finetune src/llamafactory/
+    rsync -avPr adaclip_finetune src/llamafactory/
+    rm -rf clip_finetune adaclip_finetune
     echo "prepare for xtune done"
+    echo 0 >> done
     echo "Please follow README.md to install driver and other dependency"
 fi
+
+

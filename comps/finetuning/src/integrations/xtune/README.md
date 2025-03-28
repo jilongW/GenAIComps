@@ -53,3 +53,74 @@ pip install -e ".[metrics]"
 pip install transformers==4.45.0 datasets==2.21.0
 python -m pip install intel-extension-for-pytorch==2.5.10+xpu oneccl_bind_pt==2.5.0+xpu --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
 ```
+## Data Preparation
+
+Please refer to [data/Prepare_dataset.md](./doc/Prepare_dataset.md) for checking the details about the dataset files.
+
+> [!NOTE]
+> Please update `dataset_info.json` to use your custom dataset.
+
+Prepare dataset info for caltech101
+make `caltech101.json` in your dataset directory
+```json
+[
+  
+]
+```
+then make `dataset_info.json` in your dataset directory
+```json
+{
+  "caltech101": {
+    "file_name": "caltech101.json"
+  }
+}
+```
+
+## Fine-Tuning with LLaMA Board GUI (powered by [Gradio](https://github.com/gradio-app/gradio))
+
+```bash
+ Run with A100:
+ CUDA_VISIBLE_DEVICES=0 llamafactory-cli webui
+ Run with ARC770:
+ ZE_AFFINITY_MASK=0 llamafactory-cli webui
+```
+
+
+
+
+## `Xtune` Examples
+See screenshot of running CLIP and AdaCLIP finetune on Intel Arc A770 below.
+
+UI component details can be seen [here](./doc/ui_component.md). 
+
+<table width="100%">
+  <tr>
+    <td align="center" colspan="1"><strong>CLIP finetune</strong></td>
+    <td align="center" colspan="1"><strong>AdaCLIP finetune</strong></td>
+  <tr>
+  <tr>
+    <td align="center" target="_blank"><strong><img src="./doc/clip_screen.png" width=100%></strong></td>
+    <td align="center" target="_blank"><strong><img src="./doc/adaclip_screen.png"  width=100%></strong></td>
+  <tr>
+</table>
+
+
+
+
+## Citation
+
+
+```bibtex
+@inproceedings{zheng2024llamafactory,
+  title={LlamaFactory: Unified Efficient Fine-Tuning of 100+ Language Models},
+  author={Yaowei Zheng and Richong Zhang and Junhao Zhang and Yanhan Ye and Zheyan Luo and Zhangchi Feng and Yongqiang Ma},
+  booktitle={Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 3: System Demonstrations)},
+  address={Bangkok, Thailand},
+  publisher={Association for Computational Linguistics},
+  year={2024},
+  url={http://arxiv.org/abs/2403.13372}
+}
+```
+
+## Acknowledgement
+This repo benefits from [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory), [CLIP-Adapter](https://github.com/gaopengcuhk/CLIP-Adapter) and [CoOp](https://github.com/KaiyangZhou/Dassl.pytorch). Thanks for their wonderful works.
