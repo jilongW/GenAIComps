@@ -39,7 +39,7 @@ sudo sh ./intel-oneapi-base-toolkit-2025.0.1.46_offline.sh -a --silent --cli --e
 
 ### Install Driver
 
-please follow [Install Dependency](Install%20Dependency.md) to install public Driver
+please follow [Install Dependency](./install_dependency.md) to install public Driver
 
 ### Install IPEX and other lib
 

@@ -24,7 +24,7 @@ Run install_xtune.sh to prepare component.
 
 ```bash
 apt install -y rsync
-bash install_xtune.sh
+bash prepare_xtune.sh
 ```
 
 Then please fololow [install_dependency](./doc/install_dependency.md) to install Driver for Arc 770
