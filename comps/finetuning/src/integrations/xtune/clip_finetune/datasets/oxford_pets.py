@@ -37,7 +37,6 @@ class OxfordPets(DatasetBase):
         if num_shots >= 1:
             seed = cfg.SEED
             preprocessed = os.path.join(self.split_fewshot_dir, f"shot_{num_shots}-seed_{seed}.pkl")
-
             if os.path.exists(preprocessed):
                 print(f"Loading preprocessed few-shot data from {preprocessed}")
                 with open(preprocessed, "rb") as file:
@@ -178,8 +177,10 @@ class OxfordPets(DatasetBase):
             for item in dataset:
                 if item.label not in selected:
                     continue
+
                 item_new = Datum(impath=item.impath, label=relabeler[item.label], classname=item.classname)
                 dataset_new.append(item_new)
             output.append(dataset_new)
 
         return output
+

@@ -65,9 +65,10 @@ Prepare dataset info for caltech101
 make `caltech101.json` in your dataset directory
 
 ```json
-[]
+[
+  
+]
 ```
-
 then make `dataset_info.json` in your dataset directory
 
 ```json
@@ -87,11 +88,13 @@ then make `dataset_info.json` in your dataset directory
  ZE_AFFINITY_MASK=0 llamafactory-cli webui
 ```
 
-## `Xtune` Examples
 
+
+## `Xtune` Examples
 See screenshot of running CLIP and AdaCLIP finetune on Intel Arc A770 below.
 
-UI component details can be seen [here](./doc/ui_component.md).
+UI component details can be seen [here](./doc/ui_component.md). 
+
 
 <table width="100%">
   <tr>
@@ -105,7 +108,6 @@ UI component details can be seen [here](./doc/ui_component.md).
 </table>
 
 ## Citation
-
 ```bibtex
 @inproceedings{zheng2024llamafactory,
   title={LlamaFactory: Unified Efficient Fine-Tuning of 100+ Language Models},
@@ -121,3 +123,4 @@ UI component details can be seen [here](./doc/ui_component.md).
 ## Acknowledgement
 
 This repo benefits from [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory), [CLIP-Adapter](https://github.com/gaopengcuhk/CLIP-Adapter) and [CoOp](https://github.com/KaiyangZhou/Dassl.pytorch). Thanks for their wonderful works.
+
