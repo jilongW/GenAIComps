@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (C) 2025 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
 
 if [ -f "done" ]; then
     echo "All component preparation is done"
@@ -17,5 +19,3 @@ else
     echo 0 >> done
     echo "Please follow README.md to install driver and other dependency"
 fi
-
-
