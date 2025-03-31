@@ -87,6 +87,7 @@ import torch
 import intel_extension_for_pytorch
 torch.xpu.device_count()
 ```
+
 #### Install requirements
 
 ```sh
@@ -96,6 +97,7 @@ pip install -r requirements.txt
 # Prepare Datasets
 
 ## Datasets
+
 We mainly use `ActivityNet` to do finetune, you can also use other datasets.
 
 The training data information is located in the directories `src/llamafactory/adaclip_finetune/annots-finetune` and `src/llamafactory/adaclip_finetune/annots/`. To change the finetuning and validation datasets, you can modify the `dataset`, `train_annot`, and `val_annot` paths in the finetune configurations found under `src/llamafactory/adaclip_finetune/cfgs`.
@@ -139,10 +141,7 @@ For a more detailed guide, please refer to [How to Finetune](#how-to-finetune) s
 
 [BitFit: Simple Parameter-efficient Fine-tuning for Transformer-based Masked Language-models](https://aclanthology.org/2022.acl-short.1)  
 [Scaling & Shifting Your Features: A New Baseline for Efficient Model Tuning](https://papers.neurips.cc/paper_files/paper/2022/hash/00bb4e415ef117f2dee2fc3b778d806d-Abstract-Conference.html)  
-
 [Revisiting Batch Normalization For Practical Domain Adaptation](https://openreview.net/forum?id=Hk6dkJQFx)
-
-
 Example
 
 ```json
@@ -155,7 +154,6 @@ Example
                 "visual.proj",
                 "ln_final",
                 "text_projection",
-
                 "logit_scale"
             ]
         }
@@ -170,8 +168,6 @@ Config path: `src/llamafactory/adaclip_finetune/cfgs/peft/activitynet-bitfit-5k.
 ## Importance Based Selection (IBS)
 
 Select partial layers for finetune based on the parameter updates after training a given steps/epochs. The metric for importance can be either the l2 norm of param updates or angle based, which is introduced in the following paper:
-
-
 [Angle-based Search Space Shrinking for Neural Architecture Search](https://www.ecva.net/papers/eccv_2020/papers_ECCV/html/3155_ECCV_2020_paper.php)
 
 Example
@@ -197,6 +193,7 @@ Example
     }
     ...
 ```
+
 Config path:
 `src/llamafactory/adaclip_finetune/cfgs/peft/activitynet-ibs-r005-5k.json`
 `src/llamafactory/adaclip_finetune/cfgs/peft/activitynet-ibs-r010-5k.json`
@@ -232,8 +229,6 @@ python  train.py --config src/llamafactory/adaclip_finetune/cfgs/peft/activityne
 ```
 
 Finetune AdaCLIP with ibs
-
-
 ```sh
 python  train.py --config src/llamafactory/adaclip_finetune/cfgs/peft/activitynet-ibs-r005-5k.json (or activitynet-ibs-r010-5k.json) --frames_dir  /path/to/ActivityNet/frames --top_k 16 --freeze_cnn --frame_agg mlp --resume /path/to/pre-train/model --batch_size 8
 ```
@@ -323,8 +318,6 @@ python train.py --config ./cfgs/peft/activitynet-bitfit-5k-c-32_optuna.json --fr
 ## Visualization
 
 You can review optuna tuning results by:
-
-
 ```sh
 sudo ufw allow 8084
 optuna-dashboard --host 0.0.0.0 --port 8084 sqlite:///optuna.db

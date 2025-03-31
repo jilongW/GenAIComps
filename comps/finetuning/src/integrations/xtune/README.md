@@ -88,12 +88,11 @@ then make `dataset_info.json` in your dataset directory
  ZE_AFFINITY_MASK=0 llamafactory-cli webui
 ```
 
-
-
 ## `Xtune` Examples
 See screenshot of running CLIP and AdaCLIP finetune on Intel Arc A770 below.
 
 UI component details can be seen [here](./doc/ui_component.md). 
+
 
 
 <table width="100%">

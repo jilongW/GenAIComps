@@ -177,10 +177,8 @@ class OxfordPets(DatasetBase):
             for item in dataset:
                 if item.label not in selected:
                     continue
-
                 item_new = Datum(impath=item.impath, label=relabeler[item.label], classname=item.classname)
                 dataset_new.append(item_new)
             output.append(dataset_new)
 
         return output
-
