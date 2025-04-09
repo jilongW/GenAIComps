@@ -101,6 +101,7 @@ then make `dataset_info.json` in your dataset directory
 ```
 
 ## Fine-Tuning with LLaMA Board GUI (powered by [Gradio](https://github.com/gradio-app/gradio))
+> [!NOTE] We don't support multi-card in GUI now, will add it later. 
 
 When run with prepare_xtune.sh, it will automatic run ZE_AFFINITY_MASK=0 llamafactory-cli webui.
 
