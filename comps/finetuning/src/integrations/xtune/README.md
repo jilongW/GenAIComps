@@ -152,7 +152,7 @@ cd src/llamafactory/adaclip_finetune
 
 ### DeepSeek-R1 Distillation(not main function)
 
-Please see [doc](./doc/DeepSeek-R1_distillation_best_practice-v1.1.pdf) for details
+Please see [doc](./doc/DeepSeek-R1_distillation_best_practice-v1.3.pdf) for details
 
 #### Step 1: Download existing CoT synthetic dataset from huggingface
 
