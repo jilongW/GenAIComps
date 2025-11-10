@@ -40,6 +40,9 @@ class ServiceType(Enum):
     STRUCT2GRAPH = 23
     LANGUAGE_DETECTION = 24
     PROMPT_TEMPLATE = 25
+    PROMPT_REGISTRY = 26
+    TEXT2QUERY = 27
+    ARB_POST_HEARING_ASSISTANT = 28
 
 
 class MegaServiceEndpoint(Enum):
