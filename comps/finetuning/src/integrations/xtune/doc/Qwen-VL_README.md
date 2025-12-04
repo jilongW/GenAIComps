@@ -1,126 +1,38 @@
 # Qwen2-VL & Qwen2.5-VL Finetune and Hyperparameter Optimization
 
-This is a flexible Qwen2-VL & Qwen2.5-VL model finetune and Optuna hyperparameter optimization script that supports multiple running modes.
+This is a guide of flexible `Qwen2-VL` & `Qwen2.5-VL` model finetune and hyperparameter optimization with Optuna.
 
-You can select to run optuna_tuning.py or finetune with command lines.
+You can select to finetune with command lines or run optuna_tuning.py with multi-modes.
 
 ## Table of Contents
 
 - [Features](#features)
 - [Configuration Differences Between Qwen2-VL and Qwen2.5-VL](#configuration-differences-between-qwen2-vl-and-qwen25-vl)
-- [Usage](#usage)
-  - [Optuna Hyperparameter Optimization Mode](#optuna-hyperparameter-optimization-mode)
-  - [Train+Eval Mode](#traineval-mode)
-  - [Train-Only Mode](#train-only-mode)
-  - [Command line Finetune](#command-line-finetune)
+- [Command line Finetune](#command-line-finetune)
+- [Optuna Hyperparameter Optimization Finetune](#optuna-hyperparameter-optimization-finetune)
 - [Configuration Parameters](#configuration-parameters)
-  - [Base Configuration](#base-configuration-base)
-  - [Optuna Configuration](#optuna-configuration-optuna---required-only-for-optimization-mode)
-  - [Training Configuration](#training-configuration-training)
-  - [Evaluation Configuration](#evaluation-configuration-evaluation---optional)
-- [Optuna Features](#optuna-features)
-  - [Supported Parameters](#supported-parameters)
-  - [Supported Samplers](#supported-samplers)
+- [Optuna features](#optuna-features)
 - [Output and Results](#output-and-results)
-  - [Optuna Optimization Mode Output](#optuna-optimization-mode-output)
-  - [Training Mode Output](#training-mode-output)
-  - [Evaluation Metrics](#evaluation-metrics)
+- [Evaluation Metrics](#evaluation-metrics)
 - [Calculation and Plotting of Evaluation Metrics During Fine-Tuning](#calculation-and-plotting-of-evaluation-metrics-during-fine-tuning)
 
 ##  Features
-
-- **Optuna Hyperparameter Optimization**: Automatically search for optimal `learning rate` and `warmup steps`of best `bleu-4` result
-- **Train+Eval Mode**: Finetune and evaluate with fixed parameters
-- **Train-Only Mode**: Only perform model finetune without evaluation
-- **Flexible Configuration**: Support nested JSON configuration files and command-line parameter overrides
-- **Fintune by command lines**: You can also finetune qwen2-vl by command lines.
+- **Finetune by command lines**: You can finetune `Qwen2-VL`/`Qwen2.5-VL` by command lines.
+- **Optuna Hyperparameter Optimization Finetune**:
+  Support three different modes:
+  - **Optuna Mode**: Automatically search for optimal `learning rate` and `warmup steps`of best `bleu-4` result.
+  - **Train+Eval Mode**: Finetune and evaluate with fixed parameters.
+  - **Train-Only Mode**: Only perform model finetune without evaluation.
+- **Calculation and Plotting of Evaluation Metrics During Fine-Tuning** : We provide scripts to plot evaluation metrics plots during finetune process(have to run after the whole finetune process).
 
 ## Configuration Differences Between Qwen2-VL and Qwen2.5-VL
 
 The configuration is largely the same, but due to single-card performance limitations, it is recommended to reduce the `video_fps`,`per_device_train_batch_size` or `gradient_accumulation_steps` when finetune Qwen2.5-VL to avoid memory shortages.
 
-## Usage
 
-We provide sample configs under `./qwen_vl_configs`, users can modify detail parameter vaules as needed.
+## Command line Finetune
 
-### Optuna Hyperparameter Optimization Mode
-
-**Qwen2-VL**
-
-  ```bash
-  python optuna_tuning.py --config_file ./qwen_vl_configs/config_optuna.json
-  ```
-**Qwen2.5-VL**
-
-  ```bash
-python optuna_tuning.py \
-  --config_file ./qwen_vl_configs/config_optuna.json \
-  --override \
-    base.model_name=Qwen2.5-VL-7B-Instruct \
-    optuna.study_name=qwen2_5vl_hyperparameter_tuning \
-    training.gradient_accumulation_steps=4 \
-    training.video_fps=0.05 \
-    evaluation.video_fps=0.05 \
-  
-  ```
-#### Visualization
-
-If you want to see visual results of Optuna:
-Run:
-
-```sh
-sudo ufw allow 8084
-optuna-dashboard --host 0.0.0.0 --port 8084 sqlite:///./saves/optuna_tuning/optuna_study.db
-```
-
-Open in the website:
-
-```
-http://<serverIP>:8084/dashboard
-```
-
-### Train+Eval Mode
-
-**Qwen2-VL**
-
-  ```bash
-  python optuna_tuning.py --config_file ./qwen_vl_configs/config_finetune_eval.json
-  ```
-**Qwen2.5-VL**
-
-  ```bash
-python optuna_tuning.py \
-  --config_file ./qwen_vl_configs/config_finetune_eval.json \
-  --override \
-    base.model_name=Qwen2.5-VL-7B-Instruct \
-    training.gradient_accumulation_steps=4 \
-    training.video_fps=0.05 \
-    evaluation.video_fps=0.05
-  
-  ```
-
-
-### Train-Only Mode
-
-**Qwen2-VL**
-
-  ```bash
-  python optuna_tuning.py --config_file ./qwen_vl_configs/config_finetune_only.json
-  ```
-**Qwen2.5-VL**
-
-  ```bash
-python optuna_tuning.py \
-  --config_file ./qwen_vl_configs/config_finetune_only.json \
-  --override \
-    base.model_name=Qwen2.5-VL-7B-Instruct \
-    evaluation.video_fps=0.05
-  
-  ```
-
-### Command line Finetune
-
-#### Qwen2-VL
+### Qwen2-VL
 
 ```bash
 export DATA='where you can find dataset_info.json'
@@ -167,7 +79,7 @@ llamafactory-cli train \
     --lora_target all
 ```
 
-#### Qwen2.5-VL
+### Qwen2.5-VL
 ```bash
 export DATA='where you can find dataset_info.json'
 #To point which dataset llamafactory will use, have to add the datasets into dataset_info.json before finetune.
@@ -213,9 +125,87 @@ llamafactory-cli train \
     --lora_target all
 ```
 
-## Configuration Parameters
+## Optuna Hyperparameter Optimization Finetune
 
-### Base Configuration (base)
+We provide sample configs under `./qwen_vl_configs`, users can modify detail parameter vaules as needed.
+
+### Optuna Mode
+
+- **Qwen2-VL**
+
+    ```bash
+    python optuna_tuning.py --config_file ./qwen_vl_configs/config_optuna.json
+    ```
+- **Qwen2.5-VL**
+
+    ```bash
+  python optuna_tuning.py \
+    --config_file ./qwen_vl_configs/config_optuna.json \
+    --override \
+      base.model_name=Qwen2.5-VL-7B-Instruct \
+      optuna.study_name=qwen2_5vl_hyperparameter_tuning \
+      training.gradient_accumulation_steps=4 \
+      training.video_fps=0.05 \
+      evaluation.video_fps=0.05
+    ```
+- **Visualization**:
+
+  If you want to see visual results of Optuna:
+  Run:
+
+  ```sh
+  sudo ufw allow 8084
+  optuna-dashboard --host 0.0.0.0 --port 8084 sqlite:///./saves/optuna_tuning/optuna_study.db
+  ```
+
+  Open in the website:
+
+  ```
+  http://<serverIP>:8084/dashboard
+  ```
+
+### Train+Eval Mode
+
+- **Qwen2-VL**
+
+    ```bash
+    python optuna_tuning.py --config_file ./qwen_vl_configs/config_finetune_eval.json
+    ```
+- **Qwen2.5-VL**
+
+    ```bash
+  python optuna_tuning.py \
+    --config_file ./qwen_vl_configs/config_finetune_eval.json \
+    --override \
+      base.model_name=Qwen2.5-VL-7B-Instruct \
+      training.gradient_accumulation_steps=4 \
+      training.video_fps=0.05 \
+      evaluation.video_fps=0.05
+    ```
+
+
+### Train-Only Mode
+
+- **Qwen2-VL**
+
+    ```bash
+    python optuna_tuning.py --config_file ./qwen_vl_configs/config_finetune_only.json
+    ```
+- **Qwen2.5-VL**
+
+    ```bash
+  python optuna_tuning.py \
+    --config_file ./qwen_vl_configs/config_finetune_only.json \
+    --override \
+      base.model_name=Qwen2.5-VL-7B-Instruct \
+      training.gradient_accumulation_steps=4 \
+      training.video_fps=0.05
+    ```
+
+
+### Configuration Parameters
+
+#### Base Configuration (base)
 
 | Parameter           | Description                                                           | Default Value                    | Type    |
 | ------------------- | --------------------------------------------------------------------- | -------------------------------- | ------- |
@@ -225,7 +215,7 @@ llamafactory-cli train \
 | `model_name`        | Model name                                                            | "Qwen2-VL-7B-Instruct-GPTQ-Int8" | string  |
 | `print_detail_log`  | Whether to print detailed finetune or evaluation logs of LLamaFactory | true                             | boolean |
 
-### Optuna Configuration (optuna) - Required only for optimization mode
+#### Optuna Configuration (optuna) - Required only for optimization mode
 
 | Parameter           | Description                                  | Default Value                   | Type    |
 | ------------------- | -------------------------------------------- | ------------------------------- | ------- |
@@ -238,7 +228,7 @@ llamafactory-cli train \
 | `warmup_steps_max`  | Maximum value for warmup steps search range  | 500                             | integer |
 
 
-### Training Configuration (training)
+#### Training Configuration (training)
 
 | Parameter                     | Description                                  | Default Value                   | Type    |
 | ----------------------------- | -------------------------------------------- | ------------------------------- | ------- |
@@ -264,7 +254,7 @@ llamafactory-cli train \
 | `learning_rate`               | Learning rate (required for non-Optuna mode) | null                            | float   |
 | `warmup_steps`                | Warmup steps (required for non-Optuna mode)  | null                            | integer |
 
-### Evaluation Configuration (evaluation) - Optional
+#### Evaluation Configuration (evaluation) - Optional
 
 | Parameter                    | Description                              | Default Value                      | Type    |
 | ---------------------------- | ---------------------------------------- | ---------------------------------- | ------- |
@@ -279,9 +269,9 @@ llamafactory-cli train \
 | `max_samples`                | Maximum number of samples                | 100000                             | integer |
 | `video_fps`                  | Video frame rate                         | 0.1                                | float   |
 
-## Optuna features
+### Optuna features
 
-### Supported Parameters
+#### Supported Parameters
 
 - `learning_rate` and `warmup_steps`.
 
@@ -299,7 +289,7 @@ llamafactory-cli train \
 }
 ```
 
-### Supported Samplers
+#### Supported Samplers
 
 | Sampler Name          | Description                                     | Use Case                                                            |
 | --------------------- | ----------------------------------------------- | ------------------------------------------------------------------- |
@@ -312,15 +302,15 @@ llamafactory-cli train \
 | `QMCSampler`          | Quasi-Monte Carlo sampler                       | Low discrepancy sequences, uniform exploration                      |
 
 
-## Output and Results
+### Output and Results
 
-### Optuna Optimization Mode Output
+#### Optuna Mode Output
 
 - Training results: `{base_output_dir}/{study_name}/trial_XXX/`
 - Optuna database: `{base_output_dir}/optuna_study.db`
 - Best parameters: `{base_output_dir}/{study_name}/best_params.json`
 
-### Training Mode Output
+#### Train+Eval/Train-Only Mode Output
 
 - Training results: `{base_output_dir}/{model_name}/{timestamp}/`
 - Evaluation results: `{base_output_dir}/{model_name}/{timestamp}/evaluation/`
@@ -336,12 +326,12 @@ The script returns all evaluation metrics, including but not limited to:
 
 ## Calculation and Plotting of Evaluation Metrics During Fine-Tuning
 
-If you want to plot eval metrics during finetune process:
+After the finetune process over, if you want to plot eval metrics during finetune process:
 Change `MODEL_NAME`,`EXPERIENT_NAME`,`EVAL_DATASET` as you need and run evaluation metrics calculation sctrpt:
 
 ```bash
 export MODEL_DIR = where can find eval model
-export MODEL_NAME="Qwen2-VL-2B-Instruct"
+export MODEL_NAME= the model name you want to use(e.g.,Qwen2-VL-2B-Instruct)
 export EXPERIENT_NAME="finetune_onlyplot_evalloss_5e-6"
 export EVAL_DATASET=activitynet_qa_val_500_limit_20s
 chmod a+x ./doc/run_eval.sh
