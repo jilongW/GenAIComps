@@ -40,6 +40,7 @@ from ...clip_finetune.datasets import (
     caltech101,
     dtd,
     flickr,
+    flickrcn,
     flickr5k,
     imagenet,
     imagenet_a,
