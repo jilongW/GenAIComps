@@ -30,19 +30,31 @@ You can select to finetune with command lines or run optuna_tuning.py with multi
 The configuration is largely the same, but due to single-card performance limitations, it is recommended to reduce the `video_fps`,`per_device_train_batch_size` or `gradient_accumulation_steps` when finetune Qwen2.5-VL to avoid memory shortages.
 
 
-## Command line Finetune
+## Command line Finetune & Eval
 
-### Qwen2-VL
+| Model            | Task          | Hardware Support       | Card numbers |
+| ---------------- | ------------- | ---------------------- | ----------- |
+| Qwen2-VL-7B-GPTQ | Video Q&A     | Intel B60 & NV         | Single Card |
+| Qwen2.5-VL-7B    | Video Q&A     | Intel B60 & NV         | Single Card |
+| Qwen2.5-VL-32B   | Video Summary | NV                     | Multi-Card  |
+
+ **Note:** Models with smaller parameter sizes than those listed in the table are also compatible and can be run successfully.
+
+### Qwen2-VL Finetune & Eval for Video Q&A
 
 ```bash
+# Export requirments
 export DATA='where you can find dataset_info.json'
-#To point which dataset llamafactory will use, have to add the datasets into dataset_info.json before finetune.
+export MODEL='where you put model file'
+# To point which dataset llamafactory will use, have to add the datasets into dataset_info.json before finetune.
 export dataset=activitynet_qa_2000_limit_20s
 export eval_dataset=activitynet_qa_val_500_limit_20s
+
+# Finetune
 llamafactory-cli train \
     --stage sft \
     --do_train True \
-    --model_name_or_path /model/Qwen2-VL-7B-Instruct-GPTQ-Int8 \
+    --model_name_or_path $MODEL/Qwen2-VL-2B-Instruct \
     --preprocessing_num_workers 16 \
     --finetuning_type lora \
     --template qwen2_vl \
@@ -50,7 +62,7 @@ llamafactory-cli train \
     --dataset_dir $DATA \
     --dataset $dataset \
     --cutoff_len 2048 \
-    --learning_rate 5e-05 \
+    --learning_rate 5e-06 \
     --num_train_epochs 20.0 \
     --max_samples 100000 \
     --per_device_train_batch_size 2 \
@@ -58,11 +70,11 @@ llamafactory-cli train \
     --lr_scheduler_type cosine \
     --max_grad_norm 1.0 \
     --logging_steps 10 \
-    --save_steps 100 \
-    --warmup_steps 0 \
+    --save_steps 125 \
+    --warmup_steps 100 \
     --packing False \
     --report_to none \
-    --output_dir saves/Qwen2-VL-7B-Instruct-GPTQ-Int8/lora/finetune_qwen2vl \
+    --output_dir saves/Qwen2-VL-2B-Instruct/lora/VQA \
     --bf16 True \
     --plot_loss True \
     --ddp_timeout 180000000 \
@@ -70,25 +82,52 @@ llamafactory-cli train \
     --video_fps 0.1 \
     --per_device_eval_batch_size 1 \
     --eval_strategy steps \
-    --eval_steps 100 \
+    --eval_steps 125 \
     --eval_dataset ${eval_dataset} \
-    --predict_with_generate true \
     --lora_rank 8 \
     --lora_alpha 16 \
     --lora_dropout 0 \
     --lora_target all
+
+# Eval:
+llamafactory-cli train \
+    --stage sft \
+    --model_name_or_path  $MODEL/Qwen2-VL-2B-Instruct \
+    --preprocessing_num_workers 16 \
+    --finetuning_type lora \
+    --quantization_method bitsandbytes \
+    --template qwen2_vl \
+    --flash_attn auto \
+    --dataset_dir $DATA \
+    --eval_dataset $eval_dataset \
+    --cutoff_len 1024 \
+    --max_samples 100000 \
+    --per_device_eval_batch_size 1 \
+    --predict_with_generate True \
+    --max_new_tokens 128 \
+    --top_p 0.7 \
+    --temperature 0.95 \
+    --output_dir saves/Qwen2-VL-7B-Instruct/lora/VQA/eval \
+    --do_predict True \
+    --adapter_name_or_path saves/Qwen2-VL-7B-Instruct/lora/VQA \
+    --video_fps 0.1 \
+    --report_to none
 ```
 
-### Qwen2.5-VL
+### Qwen2.5-VL-7B Finetune & Eval for Video Q&A
 ```bash
+# Export requirments
 export DATA='where you can find dataset_info.json'
-#To point which dataset llamafactory will use, have to add the datasets into dataset_info.json before finetune.
+export MODEL='where you put model file'
+# To point which dataset llamafactory will use, have to add the datasets into dataset_info.json before finetune.
 export dataset=activitynet_qa_1000_limit_20s
 export eval_dataset=activitynet_qa_val_250_limit_20s
+
+# Finetune:
 llamafactory-cli train \
     --stage sft \
     --do_train True \
-    --model_name_or_path /home/edgeai/wxs/workspace/models/Qwen2.5-VL-7B-Instruct \
+    --model_name_or_path $MODEL/Qwen2.5-VL-7B-Instruct \
     --preprocessing_num_workers 16 \
     --finetuning_type lora \
     --template qwen2_vl \
@@ -96,19 +135,19 @@ llamafactory-cli train \
     --dataset_dir $DATA \
     --dataset $dataset \
     --cutoff_len 2048 \
-    --learning_rate 5e-05 \
-    --num_train_epochs 2 \
+    --learning_rate 5e-06 \
+    --num_train_epochs 10.0 \
     --max_samples 100000 \
     --per_device_train_batch_size 2 \
     --gradient_accumulation_steps 4 \
     --lr_scheduler_type cosine \
     --max_grad_norm 1.0 \
-    --logging_steps 10 \
-    --save_steps 100 \
-    --warmup_steps 0 \
+    --logging_steps 5 \
+    --save_steps 125 \
+    --warmup_steps 50 \
     --packing False \
     --report_to none \
-    --output_dir saves/Qwen2.5-VL-7B-Instruct/lora/finetune_qwen2.5vl \
+    --output_dir  saves/Qwen2.5-VL-7B-Instruct/lora/VQA \
     --bf16 True \
     --plot_loss True \
     --ddp_timeout 180000000 \
@@ -116,13 +155,122 @@ llamafactory-cli train \
     --video_fps 0.05 \
     --per_device_eval_batch_size 1 \
     --eval_strategy steps \
-    --eval_steps 100 \
+    --eval_steps 125 \
     --eval_dataset $eval_dataset \
-    --predict_with_generate true \
     --lora_rank 8 \
     --lora_alpha 16 \
     --lora_dropout 0 \
     --lora_target all
+
+# Eval:
+llamafactory-cli train \
+    --stage sft \
+    --model_name_or_path $MODEL/Qwen2.5-VL-7B-Instruct \
+    --preprocessing_num_workers 16 \
+    --finetuning_type lora \
+    --quantization_method bitsandbytes \
+    --template qwen2_vl \
+    --flash_attn auto \
+    --dataset_dir $DATA \
+    --eval_dataset $eval_dataset \
+    --cutoff_len 1024 \
+    --max_samples 100000 \
+    --per_device_eval_batch_size 1 \
+    --predict_with_generate True \
+    --max_new_tokens 64\
+    --top_p 0.7 \
+    --temperature 0.95 \
+    --adapter_name_or_path saves/Qwen2.5-VL-7B-Instruct/lora/VQA \
+    --output_dir saves/Qwen2.5-VL-7B-Instruct/lora/VQA/eval \
+    --trust_remote_code True \
+    --video_fps 0.05 \
+    --bf16 True \
+    --do_predict True
+
+```
+
+### Qwen2.5-VL-32B Finetune & Eval for Video Summary
+We only support finetune Qwen2.5-VL-32B for video summary on NV multi-cards now.
+Need to enable DeepSpeed stage:
+```bash
+# Export requirments
+export DATA='where you can find dataset_info.json'
+export MODEL='where you put model file'
+# To point which dataset llamafactory will use, have to add the datasets into dataset_info.json before finetune.
+export dataset=MLUS_Vsum_train
+export eval_dataset=MLUS_Vsum_test
+
+# Finetune with multi-card:
+FORCE_TORCHRUN=1 llamafactory-cli train \
+    --stage sft \
+    --do_train true \
+    --model_name_or_path $MODEL \
+    --image_max_pixels 262144 \
+    --video_max_pixels 16384 \
+    --trust_remote_code true \
+    --finetuning_type lora \
+    --freeze_vision_tower true \
+    --freeze_multi_modal_projector true \
+    --freeze_language_model false \
+    --lora_rank 8 \
+    --lora_target all \
+    --deepspeed examples/deepspeed/ds_z3_config.json \
+    --dataset_dir $DATA \
+    --dataset $dataset \
+    --template qwen2_vl \
+    --cutoff_len 512 \
+    --max_samples 1000 \
+    --overwrite_cache true \
+    --preprocessing_num_workers 16 \
+    --dataloader_num_workers 4 \
+    --output_dir saves/qwen2_5vl-32b/lora/VSum \
+    --logging_steps 10 \
+    --save_steps 50 \
+    --plot_loss true \
+    --overwrite_output_dir true \
+    --save_only_model false \
+    --report_to none \
+    --per_device_train_batch_size 1 \
+    --gradient_accumulation_steps 1 \
+    --learning_rate 1.0e-5 \
+    --num_train_epochs 1 \
+    --lr_scheduler_type cosine \
+    --warmup_ratio 0.07 \
+    --bf16 true \
+    --ddp_timeout 180000000 \
+    --video_fps 0.05 \
+    --per_device_eval_batch_size 1 \
+    --eval_strategy steps \
+    --eval_steps 50 \
+    --eval_dataset $eval_dataset
+
+# Eval with single card:
+CUDA_VISIBLE_DEVICES=0 llamafactory-cli train \
+    --stage sft \
+    --model_name_or_path $MODEL/Qwen2.5-VL-32B-Instruct \
+    --quantization_method bitsandbytes \
+    --quantization_bit 4 \
+    --image_max_pixels 262144 \
+    --video_max_pixels 16384 \
+    --trust_remote_code true \
+    --finetuning_type lora \
+    --template qwen2_vl \
+    --flash_attn auto \
+    --dataset_dir $data \
+    --eval_dataset $eval_dataset \
+    --cutoff_len 512 \
+    --max_samples 100000 \
+    --preprocessing_num_workers 16 \
+    --output_dir saves/qwen2_5vl-32b/lora/VSum/eval \
+    --overwrite_output_dir true \
+    --do_predict true \
+    --per_device_eval_batch_size 1 \
+    --predict_with_generate true \
+    --max_new_tokens 256 \
+    --top_p 0.7 \
+    --temperature 0.95 \
+    --bf16 true \
+    --video_fps 0.05
 ```
 
 ## Optuna Hyperparameter Optimization Finetune

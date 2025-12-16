@@ -267,10 +267,119 @@ wget https://cs.stanford.edu/people/ranjaykrishna/densevid/captions.zip
         with open(combine_json, "w") as combine_file:
             json.dump(combined_data, combine_file, indent=4)
     ```
+### MLVU
+- We use the Video Summary part of the MLVU dataset to finetune Qwen2.5-VL 32B.
+- Please follow https://huggingface.co/datasets/MLVU/MVLU to download dataset videos and json files.
+- Use data in json/9_summary.json to finetune Qwen2.5-VL 32B for video summary.
 
-## Update dataset_info.json
+- Then use below `MLVU_transform.py` file to convert 9_summary.json to Xtune accepted json format, you can change the train and test/val ratio as you need :
+    ```bash
+    python MLVU_transform.py --train_ratio 0.8 --test_ratio 0.1
+    ```
+    MLVU_transform.py:
+    ```python
+    import json
+    import random
+    import argparse
 
-Update dataset_info.json in your data dir:
+
+    def transform_data(input_path, output_path, video_path):
+        with open(input_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        output = []
+        for item in data:
+            # Skip invalid items
+            if not all(k in item for k in ("question", "answer", "video")):
+
+                continue
+            entry = {
+                "messages": [
+                    {"role": "user", "content": f"<video>{item['question']}"},
+                    {"role": "assistant", "content": item["answer"]}
+                ],
+                "videos": [f"{video_path}{item['video']}"]
+            }
+            output.append(entry)
+
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(output, f, ensure_ascii=False, indent=4)
+
+        print(f"Conversion completed, output file: {output_path}")
+        return output
+
+    def split_train_test(data, train_ratio, train_path, test_path):
+        if not 0 < train_ratio < 1:
+            raise ValueError("train_ratio must be in the range (0, 1)")
+        n_train = int(len(data) * train_ratio)
+        idx = list(range(len(data)))
+        random.shuffle(idx)
+        train_idx = idx[:n_train]
+        test_idx = idx[n_train:]
+        train_data = [data[i] for i in train_idx]
+        test_data = [data[i] for i in test_idx]
+        with open(train_path, "w", encoding="utf-8") as f:
+            json.dump(train_data, f, ensure_ascii=False, indent=4)
+        with open(test_path, "w", encoding="utf-8") as f:
+            json.dump(test_data, f, ensure_ascii=False, indent=4)
+        print(f"Saved {len(train_data)} training samples to {train_path} (ratio: {train_ratio:.1%})")
+        print(f"Saved {len(test_data)} test samples to {test_path} (ratio: {1-train_ratio:.1%})")
+
+    def split_train_eval_test(data, train_ratio, eval_ratio, train_path, eval_path, test_path):
+        if train_ratio + eval_ratio >= 1:
+            raise ValueError(f"train_ratio ({train_ratio}) + eval_ratio ({eval_ratio}) = {train_ratio + eval_ratio} must be less than 1")
+        if not (0 < train_ratio < 1 and 0 < eval_ratio < 1):
+            raise ValueError("train_ratio and eval_ratio must be in the range (0, 1)")
+        n_train = int(len(data) * train_ratio)
+        n_eval = int(len(data) * eval_ratio)
+        idx = list(range(len(data)))
+        random.shuffle(idx)
+        train_idx = idx[:n_train]
+        eval_idx = idx[n_train:n_train + n_eval]
+        test_idx = idx[n_train + n_eval:]
+        train_data = [data[i] for i in train_idx]
+        eval_data = [data[i] for i in eval_idx]
+        test_data = [data[i] for i in test_idx]
+        with open(train_path, "w", encoding="utf-8") as f:
+            json.dump(train_data, f, ensure_ascii=False, indent=4)
+        with open(eval_path, "w", encoding="utf-8") as f:
+            json.dump(eval_data, f, ensure_ascii=False, indent=4)
+        with open(test_path, "w", encoding="utf-8") as f:
+            json.dump(test_data, f, ensure_ascii=False, indent=4)
+        test_ratio = 1 - train_ratio - eval_ratio
+        print(f"Saved {len(train_data)} training samples to {train_path} (ratio: {train_ratio:.1%})")
+        print(f"Saved {len(eval_data)} evaluation samples to {eval_path} (ratio: {eval_ratio:.1%})")
+        print(f"Saved {len(test_data)} test samples to {test_path} (ratio: {test_ratio:.1%})")
+
+
+    if __name__ == "__main__":
+
+        parser = argparse.ArgumentParser(description="Convert and split MLUS data into train/eval/test sets.")
+        parser.add_argument("--input_path", type=str, default="./MLVU/json/9_summary.json", help="Input MLUS json path")
+        parser.add_argument("--convert_path", type=str, default="MLUS_Vsum_converted.json", help="Output converted json path")
+        parser.add_argument("--video_path", type=str, default="./MLVU/video", help="Video directory prefix (with trailing slash)")
+        parser.add_argument("--train_ratio", type=float, required=True, help="Ratio of samples for training set (0-1)")
+        parser.add_argument("--eval_ratio", type=float, default=None, help="Ratio of samples for evaluation set (0-1). If None, do two-way split")
+        parser.add_argument("--train_path", type=str, default="./MLUS_Vsum_train.json", help="Output path for train set")
+        parser.add_argument("--eval_path", type=str, default="./MLUS_Vsum_eval.json", help="Output path for eval set")
+        parser.add_argument("--test_path", type=str, default="./MLUS_Vsum_test.json", help="Output path for test set")
+        args = parser.parse_args()
+
+        output = transform_data(args.input_path, args.convert_path, args.video_path)
+        print(f"\nTotal data samples: {len(output)}\n")
+
+        if args.eval_ratio is not None:
+            # Three-way split
+            split_train_eval_test(output, args.train_ratio, args.eval_ratio, args.train_path, args.eval_path, args.test_path)
+        else:
+            # Two-way split
+            split_train_test(output, args.train_ratio, args.train_path, args.test_path)
+
+    ```
+## Update dataset_info.json and dataset json files
+
+**Configuration Requirements:**
+- **CLIP/CN-CLIP/AdaCLIP:** Add the corresponding JSON filename only
+- **Qwen-VL series:** Requires additional detailed configuration data as below.
 ### dataset_info.json
 
 ```json
@@ -283,6 +392,20 @@ Update dataset_info.json in your data dir:
   },
   "activitynet_qa_2000_limit_20s": {
     "file_name": "activitynet_qa_2000_limit_20s.json",
+    "formatting": "sharegpt",
+    "columns": {
+      "messages": "messages",
+      "videos": "videos"
+    },
+    "tags": {
+      "role_tag": "role",
+      "content_tag": "content",
+      "user_tag": "user",
+      "assistant_tag": "assistant"
+    }
+  },
+    "MLUS_Vsum_train": {
+    "file_name": "MLUS_Vsum_train.json",
     "formatting": "sharegpt",
     "columns": {
       "messages": "messages",
@@ -312,4 +435,8 @@ Update dataset_info.json in your data dir:
 
 ### activitynet_qa_2000_limit_20s.json
 
-Generate by generate_llama_json_limit_frames.py
+Generate by `generate_llama_json_limit_frames.py`
+
+### MLUS_Vsum_train.json
+
+Generate by `MLVU_transform.py`
